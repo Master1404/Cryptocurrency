@@ -1,28 +1,84 @@
-﻿using Cryptocurrency.Models.Cryptocurrency;
+﻿using Cryptocurrency.Models.CryptocurencyDetail;
+using Cryptocurrency.Models.Cryptocurrency;
 using Cryptocurrency.Services;
+using Cryptocurrency.Views;
+using Prism.Mvvm;
+using Prism.Navigation;
+using Prism.Navigation.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
+using Xamarin.Forms;
+using NavigationParameters = Prism.Navigation.NavigationParameters;
 
 namespace Cryptocurrency.ViewModels
 {
-    public class CryptocurrencyViewModel : INotifyPropertyChanged  // BindableBase INotifyPropertyChanged
+    public class CryptocurrencyViewModel : BindableBase
     {
         private CryptocurrencyDataViewModel _cryptocurrencyModel;
         private IApiService _apiService;
-        public CryptocurrencyViewModel ViewModel { get; set; }
-        public CryptocurrencyViewModel(/*IApiService apiService*/)
+        private INavigationService _navigationService;
+       // public CryptocurrencyViewModel ViewModel { get; set; }
+        public ICommand SearchCommand { get; }
+        public ICommand ShowDetailsCommand { get; }
+        public CryptocurrencyViewModel(INavigationService navigationService, IApiService apiService)
         {
-            _apiService = new ApiService();
+            _filteredCryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>();
+            Cryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>();
+            _apiService = apiService;
             _cryptocurrencyModel = new CryptocurrencyDataViewModel();
-           // _apiService = apiService;
+            SearchCommand = new Command(ExecuteSearch);
+            ShowDetailsCommand = new Command(ShowDetails);
+            _navigationService = navigationService;
             LoadCryptocurrenciesAsync();
+
+            SelectedCryptocurrencyId = "bitcoin";
         }
 
-        private async void LoadCryptocurrenciesAsync()
+        private CryptocurrencyDataViewModel _selectedCryptocurrency;
+
+        public CryptocurrencyDataViewModel SelectedCryptocurrency
         {
+            get => _selectedCryptocurrency;
+            set
+            {
+                SetProperty(ref _selectedCryptocurrency, value);
+                if (_selectedCryptocurrency != null)
+                {
+                    SelectedCryptocurrencyId = _selectedCryptocurrency.Id;
+                }
+            }
+        }
+
+        private string _selectedCryptocurrencyId;
+        public string SelectedCryptocurrencyId
+        {
+            get => _selectedCryptocurrencyId;
+            set => SetProperty(ref _selectedCryptocurrencyId, value);
+        }
+
+
+        private async void ShowDetails()
+        {
+             if (SelectedCryptocurrencyId != null)
+             {
+                 var navigationParams = new NavigationParameters
+                 {
+                     { "id", SelectedCryptocurrency.Id }
+                 };
+
+                 await _navigationService.NavigateAsync("CryptocurrencyDetails", navigationParams);
+             }
+        
+        }
+
+
+
+        private async void LoadCryptocurrenciesAsync()
+        {    
             List<CryptocurrencyDataModel> result = await _apiService.GetCryptocurrencies();
             List<CryptocurrencyDataViewModel> cryptocurrencies = new List<CryptocurrencyDataViewModel>();
 
@@ -37,25 +93,69 @@ namespace Cryptocurrency.ViewModels
                 cryptocurrencies.Add(viewModel);
             }
             Cryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>(cryptocurrencies);
+
+            // Заполните _filteredCryptocurrencies данными из Cryptocurrencies
+            _filteredCryptocurrencies.Clear();
+            foreach (var cryptocurrency in Cryptocurrencies)
+            {
+                _filteredCryptocurrencies.Add(cryptocurrency);
+            }
         }
+
 
         private ObservableCollection<CryptocurrencyDataViewModel> _cryptocurrencies;
         public ObservableCollection<CryptocurrencyDataViewModel> Cryptocurrencies
         {
             get => _cryptocurrencies;
-            set
+            set => SetProperty(ref _cryptocurrencies, value);
+           
+        }
+
+        private ObservableCollection<CryptocurrencyDataViewModel> _filteredCryptocurrencies;
+        public ObservableCollection<CryptocurrencyDataViewModel> FilteredCryptocurrencies
+        {
+            get => _filteredCryptocurrencies;
+            set => SetProperty(ref _filteredCryptocurrencies, value);
+            
+        }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set => SetProperty(ref _searchText, value);
+         
+        }
+
+      /*  private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Вызываем команду поиска
+            ExecuteSearch();
+        }*/
+
+        private void ExecuteSearch()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
             {
-                _cryptocurrencies = value;
-                OnPropertyChanged(nameof(Cryptocurrencies));
+                Cryptocurrencies.Clear();
+                foreach (var cryptocurrency in _filteredCryptocurrencies)
+                {
+                    Cryptocurrencies.Add(cryptocurrency);
+                }
+            }
+            else
+            {
+                Cryptocurrencies.Clear();
+                foreach (var cryptocurrency in _filteredCryptocurrencies)
+                {
+                    if (cryptocurrency.Name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        cryptocurrency.Symbol.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        Cryptocurrencies.Add(cryptocurrency);
+                    }
+                }
             }
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-        }
     }
 }

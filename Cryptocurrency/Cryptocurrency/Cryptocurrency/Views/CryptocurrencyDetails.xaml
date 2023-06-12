@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:Cryptocurrency.ViewModels;assembly=Cryptocurrency"
+             x:Class="Cryptocurrency.Views.CryptocurrencyDetails"
+             Title="Cryptocurrency Detail Page"
+             x:DataType="viewModel:CryptoDetailViewModel">
+    
+    
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding Name}" 
+                   FontAttributes="Bold"
+                   FontSize="Title"
+                   HorizontalOptions="CenterAndExpand"
+                   Margin="0, 20, 0, 0" />
+
+            <Label Text="Rank:"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding Rank}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Symbol:"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding Symbol}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Price (USD):"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding PriceUsd}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Market Cap (USD):"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding MarketCapUsd}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Volume (USD) 24Hr:"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding VolumeUsd24Hr}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Label Text="Change % 24Hr:"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding ChangePercent24Hr}"
+                   FontSize="Subtitle"
+                   HorizontalOptions="CenterAndExpand" />
+
+            <Button Text="Купить"
+                   
+                    HorizontalOptions="CenterAndExpand"
+                    Margin="0, 20, 0, 0" />
+
+            <Button Text="Назад"
+                    HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

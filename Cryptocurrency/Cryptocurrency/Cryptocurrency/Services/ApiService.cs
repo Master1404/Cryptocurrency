@@ -1,10 +1,13 @@
-﻿using Cryptocurrency.Models.Cryptocurrency;
+﻿using Cryptocurrency.Models.CryptocurencyDetail;
+using Cryptocurrency.Models.Cryptocurrency;
+using Cryptocurrency.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace Cryptocurrency.Services
 {
@@ -53,16 +56,54 @@ namespace Cryptocurrency.Services
                 else
                 {
                     // Обработка ошибки, если запрос не удался
-                    Console.WriteLine($"Ошибка при выполнении запроса: {response.StatusCode}");
+                    //Console.WriteLine($"Ошибка при выполнении запроса: {response.StatusCode}");
+                    MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
                 // Обработка исключения, если возникла ошибка при выполнении запроса
-                Console.WriteLine($"Ошибка при выполнении запроса: {ex.Message}");
+                //  Console.WriteLine($"Ошибка при выполнении запроса: {ex.Message}");
+                MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {ex.Message}");
+            }
+
+            return null;
+        }
+        public async Task<CryptocurrencyDetailModel> GetCryptocurrencyDetails(string coinId)
+        {
+            string apiUrl = $"https://api.coincap.io/v2/assets/{coinId}";
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);     
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    CryptocurrencyDetailsApiResponse responseModel = JsonConvert.DeserializeObject<CryptocurrencyDetailsApiResponse>(jsonResponse);
+
+                    if (responseModel != null && responseModel.Data != null)
+                    {
+                        return responseModel.Data;
+                    }
+                }
+                else
+                {
+                    // Обработка ошибки, если запрос не удался
+                    //  Console.WriteLine($"Ошибка при выполнении запроса: {response.StatusCode}");
+                    MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Обработка исключения, если возникла ошибка при выполнении запроса
+                // Console.WriteLine($"Ошибка при выполнении запроса: {ex.Message}");
+                MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {ex.Message}");
             }
 
             return null;
         }
     }
+
+    
 }
