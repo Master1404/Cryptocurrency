@@ -55,15 +55,11 @@ namespace Cryptocurrency.Services
                 }
                 else
                 {
-                    // Обработка ошибки, если запрос не удался
-                    //Console.WriteLine($"Ошибка при выполнении запроса: {response.StatusCode}");
                     MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                // Обработка исключения, если возникла ошибка при выполнении запроса
-                //  Console.WriteLine($"Ошибка при выполнении запроса: {ex.Message}");
                 MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {ex.Message}");
             }
 
@@ -89,15 +85,11 @@ namespace Cryptocurrency.Services
                 }
                 else
                 {
-                    // Обработка ошибки, если запрос не удался
-                    //  Console.WriteLine($"Ошибка при выполнении запроса: {response.StatusCode}");
                     MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                // Обработка исключения, если возникла ошибка при выполнении запроса
-                // Console.WriteLine($"Ошибка при выполнении запроса: {ex.Message}");
                 MessagingCenter.Send<object, string>(this, "ApiError", $"Ошибка при выполнении запроса: {ex.Message}");
             }
 
