@@ -20,15 +20,17 @@ namespace Cryptocurrency.ViewModels
 {
     public class CryptoDetailViewModel : BaseViewModel
     {
-        private string _cryptocurrencyId;
         private INavigationService _navigationService;
         private IApiService _apiService;
-        public CryptoDetailViewModel(INavigationService navigationService)
+        public ICommand GoBackCommand { get; }
+        public ICommand OpenBinanceCommand { get; }
+        public CryptoDetailViewModel(INavigationService navigationService, IApiService apiService)
         {
-            _apiService = new ApiService();
             _detailViewModel = new CryptocurrencyDetailViewModel();
             _navigationService = navigationService;
-            _cryptocurrencyId = string.Empty;
+            _apiService = apiService;
+            GoBackCommand = new Command(GoBack);
+            OpenBinanceCommand = new Command(OpenBinanceWebsite);
         }
 
         private CryptocurrencyDataViewModel _selectedCryptocurrency;
@@ -40,7 +42,6 @@ namespace Cryptocurrency.ViewModels
         }
 
         private string _name;
-        [JsonProperty("name")]
         public string Name
         {
             get => _name;
@@ -48,7 +49,6 @@ namespace Cryptocurrency.ViewModels
         }
 
         private string _rank;
-        [JsonProperty("rank")]
         public string Rank
         {
             get => _rank;
@@ -100,15 +100,12 @@ namespace Cryptocurrency.ViewModels
 
         public override async Task InitializeAsync(INavigationParameters parameters)
         {
-            
-
             if (parameters.ContainsKey("id"))
             {
                 string cryptocurrencyId = parameters.GetValue<string>("id");
                 await LoadDetailCryptocurrency(cryptocurrencyId);
             }
         }
-
 
         private async Task LoadDetailCryptocurrency(string cryptocurrencyId)
         {
@@ -120,45 +117,50 @@ namespace Cryptocurrency.ViewModels
                 Name = result.Name;
                 Rank = result.Rank;
                 Symbol = result.Symbol;
+
                 if (decimal.TryParse(result.PriceUsd, out decimal price))
                 {
                     PriceUsd = price;
                 }
+
                 if(decimal.TryParse(result.MarketCapUsd,out decimal marketCapUsd)) 
                 {
                     MarketCapUsd = marketCapUsd;
                 }
+
                 if (decimal.TryParse(result.VolumeUsd24Hr, out decimal volumeUsd24Hr))
                 {
                     VolumeUsd24Hr = volumeUsd24Hr;
                 }
+
                 if (decimal.TryParse(result.ChangePercent24Hr, out decimal changePercent24Hr))
                 {
                     ChangePercent24Hr = changePercent24Hr;
                 }
 
-
-                // Update other properties as needed
-
                 RaisePropertyChanged(nameof(Name));
                 RaisePropertyChanged(nameof(Rank));
             }
+        }
 
+        private void GoBack(object obj)
+        {
+            _navigationService.GoBackAsync();
+        }
+
+        private void OpenBinanceWebsite()
+        {
+            string binanceUrl = "https://www.binance.com/";
+            Device.OpenUri(new Uri(binanceUrl));
         }
 
         public void OnNavigatedFrom(INavigationParameters parameters)
         {
-            throw new NotImplementedException();
+
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
-            /* if (parameters.ContainsKey("cryptocurrency"))
-             {
-                 // SelectedCryptocurrency = parameters.GetValue<CryptocurrencyDataViewModel>("cryptocurrency");
-                 _cryptocurrencyId = parameters.GetValue<string>("id");
-             }*/
-
             if (parameters.ContainsKey("id"))
             {
                 string cryptocurrencyId = parameters.GetValue<string>("id");

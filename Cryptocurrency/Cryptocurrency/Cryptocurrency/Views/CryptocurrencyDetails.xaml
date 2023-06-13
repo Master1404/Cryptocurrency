@@ -80,11 +80,26 @@
                        HorizontalOptions="Start" />
             </StackLayout>
 
-            <Button Text="Купить"
-                    HorizontalOptions="CenterAndExpand"
-                    Margin="0,20,0,0" />
+            <Label>
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Купить на "
+                              FontAttributes="Bold"
+                              FontSize="20"/>
+                        <Span Text="Binance"
+                              TextColor="Blue"
+                              FontSize="20"
+                              TextDecorations="Underline">
+                            <Span.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenBinanceCommand}" />
+                            </Span.GestureRecognizers>
+                        </Span>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
 
             <Button Text="Назад"
+                     Command="{Binding GoBackCommand}"
                     HorizontalOptions="CenterAndExpand" />
         </StackLayout>
     </ContentPage.Content>

@@ -11,8 +11,6 @@ namespace Cryptocurrency.Services
     public interface IApiService
     {
         Task<List<CryptocurrencyDataModel>> GetCryptocurrencies();
-        //Task<List<MarketModel>> GetMarkets();
         Task<CryptocurrencyDetailModel> GetCryptocurrencyDetails(string coinId);
-
     }
 }

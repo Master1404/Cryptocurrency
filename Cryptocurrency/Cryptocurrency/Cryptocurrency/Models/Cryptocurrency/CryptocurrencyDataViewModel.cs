@@ -7,13 +7,14 @@ using System.Windows.Input;
 
 namespace Cryptocurrency.Models.Cryptocurrency
 {
-    public class CryptocurrencyDataViewModel : BindableBase//: INotifyPropertyChanged
+    public class CryptocurrencyDataViewModel : BindableBase
     {
         private CryptocurrencyDataModel _cryptocurrencyModel;
         public CryptocurrencyDataViewModel()
         { 
             _cryptocurrencyModel = new CryptocurrencyDataModel();
         }
+
         public string Id
         {
             get { return _cryptocurrencyModel.Id; }
@@ -26,6 +27,7 @@ namespace Cryptocurrency.Models.Cryptocurrency
                 }
             }
         }
+
         public string Name
         {
             get { return _cryptocurrencyModel.Name; }
@@ -38,6 +40,7 @@ namespace Cryptocurrency.Models.Cryptocurrency
                 }
             }
         }
+
         public string Symbol
         {
             get { return _cryptocurrencyModel.Symbol; }
@@ -50,6 +53,7 @@ namespace Cryptocurrency.Models.Cryptocurrency
                 }
             }
         }
+
         public decimal PriceUsd
         {
             get { return _cryptocurrencyModel.PriceUsd; }

@@ -18,10 +18,8 @@ namespace Cryptocurrency.ViewModels
 {
     public class CryptocurrencyViewModel : BindableBase
     {
-        private CryptocurrencyDataViewModel _cryptocurrencyModel;
         private IApiService _apiService;
         private INavigationService _navigationService;
-       // public CryptocurrencyViewModel ViewModel { get; set; }
         public ICommand SearchCommand { get; }
         public ICommand ShowDetailsCommand { get; }
         public CryptocurrencyViewModel(INavigationService navigationService, IApiService apiService)
@@ -29,17 +27,15 @@ namespace Cryptocurrency.ViewModels
             _filteredCryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>();
             Cryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>();
             _apiService = apiService;
-            _cryptocurrencyModel = new CryptocurrencyDataViewModel();
             SearchCommand = new Command(ExecuteSearch);
             ShowDetailsCommand = new Command(ShowDetails);
             _navigationService = navigationService;
             LoadCryptocurrenciesAsync();
 
-            SelectedCryptocurrencyId = "bitcoin";
+           // SelectedCryptocurrencyId = "bitcoin";
         }
 
         private CryptocurrencyDataViewModel _selectedCryptocurrency;
-
         public CryptocurrencyDataViewModel SelectedCryptocurrency
         {
             get => _selectedCryptocurrency;
@@ -72,10 +68,7 @@ namespace Cryptocurrency.ViewModels
 
                  await _navigationService.NavigateAsync("CryptocurrencyDetails", navigationParams);
              }
-        
         }
-
-
 
         private async void LoadCryptocurrenciesAsync()
         {    
@@ -93,9 +86,8 @@ namespace Cryptocurrency.ViewModels
                 cryptocurrencies.Add(viewModel);
             }
             Cryptocurrencies = new ObservableCollection<CryptocurrencyDataViewModel>(cryptocurrencies);
-
-            // Заполните _filteredCryptocurrencies данными из Cryptocurrencies
             _filteredCryptocurrencies.Clear();
+
             foreach (var cryptocurrency in Cryptocurrencies)
             {
                 _filteredCryptocurrencies.Add(cryptocurrency);
@@ -108,7 +100,6 @@ namespace Cryptocurrency.ViewModels
         {
             get => _cryptocurrencies;
             set => SetProperty(ref _cryptocurrencies, value);
-           
         }
 
         private ObservableCollection<CryptocurrencyDataViewModel> _filteredCryptocurrencies;
@@ -116,7 +107,6 @@ namespace Cryptocurrency.ViewModels
         {
             get => _filteredCryptocurrencies;
             set => SetProperty(ref _filteredCryptocurrencies, value);
-            
         }
 
         private string _searchText;
@@ -124,28 +114,24 @@ namespace Cryptocurrency.ViewModels
         {
             get => _searchText;
             set => SetProperty(ref _searchText, value);
-         
         }
-
-      /*  private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // Вызываем команду поиска
-            ExecuteSearch();
-        }*/
 
         private void ExecuteSearch()
         {
             if (string.IsNullOrWhiteSpace(SearchText))
             {
                 Cryptocurrencies.Clear();
+
                 foreach (var cryptocurrency in _filteredCryptocurrencies)
                 {
                     Cryptocurrencies.Add(cryptocurrency);
                 }
             }
+
             else
             {
                 Cryptocurrencies.Clear();
+
                 foreach (var cryptocurrency in _filteredCryptocurrencies)
                 {
                     if (cryptocurrency.Name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -156,6 +142,5 @@ namespace Cryptocurrency.ViewModels
                 }
             }
         }
-
     }
 }
